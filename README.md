@@ -5,6 +5,7 @@
 
 # Step 1. Barcode demultiplexing (This step commands is for 10X Genomics data. Other datasets could use other scripts for demultiplexing)
 --snaptools provide a module dex-fastq to integrate the 10X barcode into the read name (run this tool on R1 and R3 for all library files)--
+
 snaptools dex-fastq --input-fastq=atac_v1_E18_brain_cryo_5k_S1_L003_R3_001.fastq.gz --output-fastq=atac_v1_E18_brain_cryo_5k_S1_L003_R3_001.dex.fastq.gz --index-fastq-list atac_v1_E18_brain_cryo_5k_S1_L003_R2_001.fastq.gz
 
 # combine these two library
@@ -32,7 +33,9 @@ snaptools snap-add-bmat --snap-file=atac_v1_pbmc_5k_S1_001.snap --bin-size-list 
 
 # Step 6. Analyzing snap file with SnapATAC R packages:
 --analyzing for datasets without label--
+
 Rscript --vanilla ~/projects/def-wanglab/znavidi/code/snapATAC_analysis_real.R ~/projects/def-wanglab/ATAC-seq-data/scATAC-seq/atac_v1_pbmc_10k/ atac_v1_pbmc_10k_S1 5000 http://mitra.stanford.edu/kundaje/akundaje/release/blacklists/hg19-human/wgEncodeHg19ConsensusSignalArtifactRegions.bed.gz 20 atac_v1_pbmc_10k_singlecell.csv
 
 --analyzing with datasets with label--
+
 Rscript --vanilla ~/projects/def-wanglab/znavidi/code/snapATAC_analysis_sim.R ~/projects/def-wanglab/ATAC-seq-data/scATAC-seq/GSE74310/ GSE74310 5000 http://mitra.stanford.edu/kundaje/akundaje/release/blacklists/hg19-human/wgEncodeHg19ConsensusSignalArtifactRegions.bed.gz 20
