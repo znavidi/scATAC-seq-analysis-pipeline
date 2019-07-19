@@ -9,6 +9,7 @@ snaptools dex-fastq --input-fastq=atac_v1_E18_brain_cryo_5k_S1_L003_R3_001.fastq
 
 # combine these two library
 cat Library1_1_L001_R1_001.fastq.gz Library1_2_L001_R1_001.fastq.gz > Library1_L001_R1_001.fastq.gz
+
 cat Library1_1_L001_R3_001.fastq.gz Library1_2_L001_R3_001.fastq.gz > Library1_L001_R3_001.fastq.gz
 
 # Step 2. Index reference genome (snaptools)
