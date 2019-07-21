@@ -39,3 +39,20 @@ Rscript --vanilla ~/projects/def-wanglab/znavidi/code/snapATAC_analysis_real.R ~
 --analyzing with datasets with label--
 
 Rscript --vanilla ~/projects/def-wanglab/znavidi/code/snapATAC_analysis_sim.R ~/projects/def-wanglab/ATAC-seq-data/scATAC-seq/GSE74310/ GSE74310 5000 http://mitra.stanford.edu/kundaje/akundaje/release/blacklists/hg19-human/wgEncodeHg19ConsensusSignalArtifactRegions.bed.gz 20
+
+
+
+#Cell Ranger:
+
+
+# Installation
+For installation follow instructions from this page:
+
+https://support.10xgenomics.com/single-cell-atac/software/pipelines/latest/installation
+
+
+# cell ranger count
+
+~/tool/cell_ranger/cellranger-atac-1.1.0/cellranger-atac count --id=atac_v1_adult_brain_fresh_5k --reference=/cluster/projects/bwanggroup/single_cell/ATAC_data/ref/mm10/refdata-cellranger-atac-mm10-1.1.0 --fastqs=/cluster/projects/bwanggroup/single_cell/ATAC_data/scATACseq/atac_v1_adult_brain_fresh_5k/atac_v1_adult_brain_fresh_5k_fastqs
+
+
