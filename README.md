@@ -45,6 +45,7 @@ Rscript --vanilla ~/projects/def-wanglab/znavidi/code/snapATAC_analysis_sim.R ~/
 
 ## Cell Ranger:
 
+There is a complete doumentation of Cell Ranger tool: https://support.10xgenomics.com/single-cell-atac/software/pipelines/latest/what-is-cell-ranger-atac
 
 ### Installation
 For installation follow instructions from this page:
@@ -53,6 +54,8 @@ https://support.10xgenomics.com/single-cell-atac/software/pipelines/latest/insta
 
 
 ### cell ranger count
+
+manual: https://support.10xgenomics.com/single-cell-atac/software/pipelines/latest/using/count
 
 ~/tool/cell_ranger/cellranger-atac-1.1.0/cellranger-atac count --id=atac_v1_adult_brain_fresh_5k --reference=/cluster/projects/bwanggroup/single_cell/ATAC_data/ref/mm10/refdata-cellranger-atac-mm10-1.1.0 --fastqs=/cluster/projects/bwanggroup/single_cell/ATAC_data/scATACseq/atac_v1_adult_brain_fresh_5k/atac_v1_adult_brain_fresh_5k_fastqs
 
