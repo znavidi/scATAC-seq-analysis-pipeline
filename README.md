@@ -52,6 +52,11 @@ For installation follow instructions from this page:
 
 https://support.10xgenomics.com/single-cell-atac/software/pipelines/latest/installation
 
+I downloaded Cell Ranger ATAC - 1.1.0 (April 16, 2019) version from https://support.10xgenomics.com/single-cell-atac/software/downloads/latest and mm10 cell ranger reference files (stored in "ref" folder in "data" folder)
+
+tar -xzvf cellranger-atac-1.1.0.tar.gz
+
+export PATH=/cluster/home/znavidig/tool/cell_ranger/cellranger-atac-1.1.0:$PATH
 
 ### cell ranger count
 
