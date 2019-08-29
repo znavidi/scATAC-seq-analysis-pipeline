@@ -2,13 +2,13 @@
 
 Here are the pipelines are being used for analyzing single cell ATAC-seq samples with snaptools and cellranger-atac tools.
 
-## snaptools Pipeline:
+# snaptools Pipeline:
 
 Generating snap file for a data sample could be started from raw fastq files or a XXX_fragments.tsv file(which might exist for some samples like 10X data) as input, which will be included here.
 
 
 
-# What is snap file:
+## What is snap file:
 
 snap (Single-Nucleus Accessibility Profiles) file is a hierarchically structured hdf5 file that is specially designed for storing single nucleus ATAC-seq datasets. A snap file (version 4) contains the following sessions: header (HD), cell-by-bin accessibility matrix (AM), cell-by-peak matrix (PM), cell-by-gene matrix (GM), barcode (BD) and fragment (FM).
 
