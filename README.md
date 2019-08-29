@@ -67,33 +67,33 @@ Note: --keep-single argument must be TRUE if the data is single end and FALSE if
 ##### Step 6. Analyzing snap file with SnapATAC R packages:
 Analyzing for datasets without label:
 
-	Rscript --vanilla ~/projects/def-wanglab/znavidi/code/snapATAC_analysis_real.R 
+	Rscript --vanilla ~/projects/def-wanglab/znavidi/code/snapATAC_analysis_real.R \
 
-	  / atac_v1_E18_brain_cryo_5k.bam/ (working directory)
+	  atac_v1_E18_brain_cryo_5k.bam/ \ (working directory) 
 
-	  / atac_v1_E18_brain_cryo_5k (name of snap file without .snap extension)
+	  atac_v1_E18_brain_cryo_5k \ (name of snap file without .snap extension)
 
-	  / 5000 (the bin size to analyze)
+	  5000 \ (the bin size to analyze)
 
-	  / wget http://mitra.stanford.edu/kundaje/akundaje/release/blacklists/mm10-mouse/mm10.blacklist.bed.gz (the black list of mous and http://mitra.stanford.edu/kundaje/akundaje/release/blacklists/hg19-human/wgEncodeHg19ConsensusSignalArtifactRegions.bed.gz for human)
+	  http://mitra.stanford.edu/kundaje/akundaje/release/blacklists/mm10-mouse/mm10.blacklist.bed.gz \ (the black list of mous and http://mitra.stanford.edu/kundaje/akundaje/release/blacklists/hg19-human/wgEncodeHg19ConsensusSignalArtifactRegions.bed.gz for human) 
 
-	  / 20 (number of principals component to consider)
+	  20 \ (number of principals component to consider)
 
-	  / atac_v1_E18_brain_cryo_5k_singlecell.csv (Per Barcode metrics (CSV), could be downloaded from 10X site)
+	  atac_v1_E18_brain_cryo_5k_singlecell.csv (Per Barcode metrics (CSV), could be downloaded from 10X site)
 
 analyzing with datasets with label:
 
-	Rscript --vanilla ~/projects/def-wanglab/znavidi/code/snapATAC_analysis_sim.R 
+	Rscript --vanilla ~/projects/def-wanglab/znavidi/code/snapATAC_analysis_sim.R \
 
-	/ GSE74310/ (working directory)
+	GSE74310/ \ (working directory)
 
-	/ GSE74310 (name of snap file without .snap extension)]
+	GSE74310 \ (name of snap file without .snap extension)]
 
-	/ 5000 (the bin size to analyze)
+	5000 \ (the bin size to analyze)
 
-	/ http://mitra.stanford.edu/kundaje/akundaje/release/blacklists/hg19-human/wgEncodeHg19ConsensusSignalArtifactRegions.bed.gz (the black list address) 
+	http://mitra.stanford.edu/kundaje/akundaje/release/blacklists/hg19-human/wgEncodeHg19ConsensusSignalArtifactRegions.bed.gz \ (the black list address) 
 
-	/ 20 (number of principal components to consider)
+	20 (number of principal components to consider)
 
 
 #### Analyzing GEO data with snaptools:
