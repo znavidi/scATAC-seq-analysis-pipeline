@@ -21,15 +21,15 @@ FM session contains all usable fragments for each cell. Fragments are indexed fo
 # Analyzing 10X data with snaptools:
 
 ### Step 1. Barcode demultiplexing (This step commands is for 10X Genomics data. Other datasets could use other scripts for demultiplexing)
---snaptools provide a module dex-fastq to integrate the 10X barcode into the read name (run this tool on R1 and R3 for all library files)--
+snaptools provide a module dex-fastq to integrate the 10X barcode into the read name (run this tool on R1 and R3 for all library files).
 
-snaptools dex-fastq --input-fastq=atac_v1_E18_brain_cryo_5k_S1_L003_R3_001.fastq.gz --output-fastq=atac_v1_E18_brain_cryo_5k_S1_L003_R3_001.dex.fastq.gz --index-fastq-list atac_v1_E18_brain_cryo_5k_S1_L003_R2_001.fastq.gz
+##snaptools dex-fastq --input-fastq=atac_v1_E18_brain_cryo_5k_S1_L003_R3_001.fastq.gz --output-fastq=atac_v1_E18_brain_cryo_5k_S1_L003_R3_001.dex.fastq.gz --index-fastq-list atac_v1_E18_brain_cryo_5k_S1_L003_R2_001.fastq.gz
 
 combine these two library
 
-cat Library1_1_L001_R1_001.fastq.gz Library1_2_L001_R1_001.fastq.gz > Library1_L001_R1_001.fastq.gz
+##cat Library1_1_L001_R1_001.fastq.gz Library1_2_L001_R1_001.fastq.gz > Library1_L001_R1_001.fastq.gz
 
-cat Library1_1_L001_R3_001.fastq.gz Library1_2_L001_R3_001.fastq.gz > Library1_L001_R3_001.fastq.gz
+##cat Library1_1_L001_R3_001.fastq.gz Library1_2_L001_R3_001.fastq.gz > Library1_L001_R3_001.fastq.gz
 
 ### Step 2. Index reference genome (snaptools)
 snaptools index-genome  \
