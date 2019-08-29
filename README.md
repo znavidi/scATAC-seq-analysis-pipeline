@@ -26,74 +26,74 @@ The pipline are run on https://support.10xgenomics.com/single-cell-atac/datasets
 ##### Step 1. Barcode demultiplexing (This step commands is for 10X Genomics data. Other datasets could use other scripts for demultiplexing)
 snaptools provide a module dex-fastq to integrate the 10X barcode into the read name (run this tool on R1 and R3 for all library files).
 
-snaptools dex-fastq --input-fastq=atac_v1_E18_brain_cryo_5k_S1_L001_R1_001.fastq.gz --output-fastq=atac_v1_E18_brain_cryo_5k_S1_L001_R1_001.dex.fastq.gz --index-fastq-list atac_v1_E18_brain_cryo_5k_S1_L001_R2_001.fastq.gz
+	snaptools dex-fastq --input-fastq=atac_v1_E18_brain_cryo_5k_S1_L001_R1_001.fastq.gz --output-fastq=atac_v1_E18_brain_cryo_5k_S1_L001_R1_001.dex.fastq.gz --index-fastq-list atac_v1_E18_brain_cryo_5k_S1_L001_R2_001.fastq.gz
 
-snaptools dex-fastq --input-fastq=atac_v1_E18_brain_cryo_5k_S1_L001_R3_001.fastq.gz --output-fastq=atac_v1_E18_brain_cryo_5k_S1_L001_R3_001.dex.fastq.gz --index-fastq-list atac_v1_E18_brain_cryo_5k_S1_L001_R2_001.fastq.gz
+	snaptools dex-fastq --input-fastq=atac_v1_E18_brain_cryo_5k_S1_L001_R3_001.fastq.gz --output-fastq=atac_v1_E18_brain_cryo_5k_S1_L001_R3_001.dex.fastq.gz --index-fastq-list atac_v1_E18_brain_cryo_5k_S1_L001_R2_001.fastq.gz
 
 combine these two libraries.
 
-cat atac_v1_E18_brain_cryo_5k_S1_L001_R1_001.dex.fastq.gz atac_v1_E18_brain_cryo_5k_S1_L002_R1_001.dex.fastq.gz > atac_v1_E18_brain_cryo_5k_R1.dex.fastq.gz
+	cat atac_v1_E18_brain_cryo_5k_S1_L001_R1_001.dex.fastq.gz atac_v1_E18_brain_cryo_5k_S1_L002_R1_001.dex.fastq.gz > atac_v1_E18_brain_cryo_5k_R1.dex.fastq.gz
 
-cat atac_v1_E18_brain_cryo_5k_S1_L001_R3_001.dex.fastq.gz atac_v1_E18_brain_cryo_5k_S1_L002_R3_001.dex.fastq.gz > atac_v1_E18_brain_cryo_5k_R3.dex.fastq.gz
+	cat atac_v1_E18_brain_cryo_5k_S1_L001_R3_001.dex.fastq.gz atac_v1_E18_brain_cryo_5k_S1_L002_R3_001.dex.fastq.gz > atac_v1_E18_brain_cryo_5k_R3.dex.fastq.gz
 
 run the rest of the pipeline using atac_v1_E18_brain_cryo_5k_R1.dex.fastq.gz and atac_v1_E18_brain_cryo_5k_R3.dex.fastq.gz.
 
 
 ##### Step 2. Index reference genome (snaptools)
-snaptools index-genome  \
-	--input-fasta=hg38.fa  \
-	--output-prefix=hg38  \
-	--aligner=bwa  \
-	--path-to-aligner=/opt/biotools/bwa/bin/  \
-	--num-threads=5
+	snaptools index-genome  \
+		--input-fasta=hg38.fa  \
+		--output-prefix=hg38  \
+		--aligner=bwa  \
+		--path-to-aligner=/opt/biotools/bwa/bin/  \
+		--num-threads=5
 
 
 ##### Step 3. Alignment (snaptools)
-snaptools align-paired-end --input-reference=hg38.fa --input-fastq1=atac_v1_E18_brain_cryo_5k_R1.dex.fastq.gz --input-fastq2=atac_v1_E18_brain_cryo_5k_R3.dex.fastq.gz --output-bam=atac_v1_E18_brain_cryo_5k.bam --aligner=bwa --read-fastq-command=zcat --min-cov=0 --num-threads=5 --if-sort=True --tmp-folder=./ --overwrite=TRUE
+	snaptools align-paired-end --input-reference=hg38.fa --input-fastq1=atac_v1_E18_brain_cryo_5k_R1.dex.fastq.gz --input-fastq2=atac_v1_E18_brain_cryo_5k_R3.dex.fastq.gz --output-bam=atac_v1_E18_brain_cryo_5k.bam --aligner=bwa --read-fastq-command=zcat --min-cov=0 --num-threads=5 --if-sort=True --tmp-folder=./ --overwrite=TRUE
 
 
 ##### Step 4. Pre-processing (snaptools).
 This step generates snap file from aligned bam file:
 
-snaptools snap-pre --input-file=atac_v1_E18_brain_cryo_5k.bam --output-snap=atac_v1_E18_brain_cryo_5k.snap --genome-name=hg38 --genome-size=hg38.chrom.sizes --min-mapq=30 --min-flen=0 --max-flen=1000 --keep-chrm=TRUE --keep-single=FALSE --keep-secondary=FALSE --overwrite=True --min-cov=100 --verbose=True
+	snaptools snap-pre --input-file=atac_v1_E18_brain_cryo_5k.bam --output-snap=atac_v1_E18_brain_cryo_5k.snap --genome-name=hg38 --genome-size=hg38.chrom.sizes --min-mapq=30 --min-flen=0 --max-flen=1000 --keep-chrm=TRUE --keep-single=FALSE --keep-secondary=FALSE --overwrite=True --min-cov=100 --verbose=True
 
 Note: --keep-single argument must be TRUE if the data is single end and FALSE if the data is paired end!
 
 
 ##### Step 5. Cell-by-bin matrix (snaptools)
-snaptools snap-add-bmat --snap-file=atac_v1_E18_brain_cryo_5k.snap --bin-size-list 1000 2000 5000 10000 --verbose=True
+	snaptools snap-add-bmat --snap-file=atac_v1_E18_brain_cryo_5k.snap --bin-size-list 1000 2000 5000 10000 --verbose=True
 
 
 ##### Step 6. Analyzing snap file with SnapATAC R packages:
-Analyzing for datasets without label
+Analyzing for datasets without label:
 
-Rscript --vanilla ~/projects/def-wanglab/znavidi/code/snapATAC_analysis_real.R 
+	Rscript --vanilla ~/projects/def-wanglab/znavidi/code/snapATAC_analysis_real.R 
 
-  / atac_v1_E18_brain_cryo_5k.bam/ (working directory)
-  
-  / atac_v1_E18_brain_cryo_5k (name of snap file without .snap extension)
-  
-  / 5000 (the bin size to analyze)
-  
-  / wget http://mitra.stanford.edu/kundaje/akundaje/release/blacklists/mm10-mouse/mm10.blacklist.bed.gz (the black list of mous and http://mitra.stanford.edu/kundaje/akundaje/release/blacklists/hg19-human/wgEncodeHg19ConsensusSignalArtifactRegions.bed.gz for human)
-  
-  / 20 (number of principals component to consider)
-  
-  / atac_v1_E18_brain_cryo_5k_singlecell.csv (Per Barcode metrics (CSV), could be downloaded from 10X site)
+	  / atac_v1_E18_brain_cryo_5k.bam/ (working directory)
 
---analyzing with datasets with label--
+	  / atac_v1_E18_brain_cryo_5k (name of snap file without .snap extension)
 
-Rscript --vanilla ~/projects/def-wanglab/znavidi/code/snapATAC_analysis_sim.R 
+	  / 5000 (the bin size to analyze)
 
-/ GSE74310/ (working directory)
+	  / wget http://mitra.stanford.edu/kundaje/akundaje/release/blacklists/mm10-mouse/mm10.blacklist.bed.gz (the black list of mous and http://mitra.stanford.edu/kundaje/akundaje/release/blacklists/hg19-human/wgEncodeHg19ConsensusSignalArtifactRegions.bed.gz for human)
 
-/ GSE74310 (name of snap file without .snap extension)]
+	  / 20 (number of principals component to consider)
 
-/ 5000 (the bin size to analyze)
+	  / atac_v1_E18_brain_cryo_5k_singlecell.csv (Per Barcode metrics (CSV), could be downloaded from 10X site)
 
-/ http://mitra.stanford.edu/kundaje/akundaje/release/blacklists/hg19-human/wgEncodeHg19ConsensusSignalArtifactRegions.bed.gz (the black list address) 
+analyzing with datasets with label:
 
-/ 20 (number of principal components to consider)
+	Rscript --vanilla ~/projects/def-wanglab/znavidi/code/snapATAC_analysis_sim.R 
+
+	/ GSE74310/ (working directory)
+
+	/ GSE74310 (name of snap file without .snap extension)]
+
+	/ 5000 (the bin size to analyze)
+
+	/ http://mitra.stanford.edu/kundaje/akundaje/release/blacklists/hg19-human/wgEncodeHg19ConsensusSignalArtifactRegions.bed.gz (the black list address) 
+
+	/ 20 (number of principal components to consider)
 
 
 #### Analyzing GEO data with snaptools:
