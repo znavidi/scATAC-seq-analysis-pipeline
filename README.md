@@ -5,7 +5,7 @@ Here are the pipelines are being used for analyzing single cell ATAC-seq samples
 
 #### snaptools Pipeline:
 
-Generating snap file for a data sample could be started from raw fastq files or a XXX_fragments.tsv file(which might exist for some samples like 10X data) as input, which will be included here.
+Generating snap file for a data sample could be started from raw fastq files or a XXX_fragments.tsv file(which exist for some samples like 10X data) as input, which will be included here.
 
 
 ##### What is snap file:
@@ -65,7 +65,7 @@ Note: --keep-single argument must be TRUE if the data is single end and FALSE if
 
 
 ##### Step 6. Analyzing snap file with SnapATAC R packages:
-Analyzing for datasets without label:
+Analyzing datasets without label:
 
 	Rscript --vanilla ~/projects/def-wanglab/znavidi/code/snapATAC_analysis_real.R \
 
@@ -81,7 +81,7 @@ Analyzing for datasets without label:
 
 	  atac_v1_E18_brain_cryo_5k_singlecell.csv (Per Barcode metrics (CSV), could be downloaded from 10X site)
 
-analyzing with datasets with label:
+analyzing datasets with label:
 
 	Rscript --vanilla ~/projects/def-wanglab/znavidi/code/snapATAC_analysis_sim.R \
 
@@ -102,6 +102,14 @@ GEO datasets that we have analayzed don't have cellranger canonical structured f
 
 
 ##### Step 1. Download GEO datasets:
+
+loads the sra-toolkit module
+	module load sra-toolkit/2.9.6
+	
+the downloaded sra files are stored in the home/${user}/ncbi/public/sra/ address by default.
+
+by having a text file of accession list of downloaded sra files in a text file, the fastq files could be downloaded with this command:
+	prefetch $(</home/${user}/ncbi/public/sra/X/sra/SRR_Acc_List.txt)
 
 
 ##### Step 2. Align fastq files:
