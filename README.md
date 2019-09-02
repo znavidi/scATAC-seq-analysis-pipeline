@@ -3,7 +3,7 @@
 Here are the pipelines are being used for analyzing single-cell ATAC-seq samples with snaptools and cellranger-atac tools.
 
 
-#### snaptools Pipeline:
+## snaptools Pipeline:
 
 snap file could be generated from both raw fastq files or an XXX_fragments.tsv file(which is a processed file including information of aligned data and exist for some samples like 10X data) as input. In this document, the pipelines for analyzing 10X data (starting from both from fastq file and fragments file) and other types of data which does not have a barcode at the beginning of their read names (like GEO data) are described. 
 
@@ -19,7 +19,7 @@ PM session contains cell-by-peak count matrix. PM session contains cell-by-gene 
 FM session contains all usable fragments for each cell. Fragments are indexed for fast search. Detailed information about snap file can be found here.
 
 
-#### Analyzing 10X data with snaptools (from fastq files):
+### Analyzing 10X data with snaptools (from fastq files):
 
 The pipline are run on https://support.10xgenomics.com/single-cell-atac/datasets/1.1.0/atac_v1_E18_brain_fresh_5k dataset from 10X as an example. The analysis are done on the fastq files downloaded from 10X website.
 
@@ -105,7 +105,7 @@ You can specify the bin size with which you are interested to create cell by bin
 	--verbose=True
 
 
-#### Analyzing 10X data with snaptools (from fragments.tsv.gz file):
+### Analyzing 10X data with snaptools (from fragments.tsv.gz file):
 In this case we have a XXX_fragments.tsv file which snaptools could create snap file from. Steps before this step are ignored.
 
 
@@ -151,7 +151,7 @@ You can specify the bin size with which you are interested in creating cell by b
 
 
 
-#### Analyzing GEO data with snaptools:
+### Analyzing GEO data with snaptools:
 
 GEO datasets that we have analayzed don't have cellranger canonical structured fastq or bam files and in order to be able to analyze them with snaptools we should add barcode demultiplexing step manullay. We align the sampels to reference genome and then add 16 length barcode to the beginning of their sam files. Then convert the sam files to bam files using samtools and merge all samples to one bam file. The snap file will be created from this named sorted bam file.
 
