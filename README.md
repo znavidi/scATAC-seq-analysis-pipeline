@@ -1,11 +1,11 @@
-# ATACseq_analysis
+# ATACseq Analysis Pipeline
 
-Here are the pipelines are being used for analyzing single cell ATAC-seq samples with snaptools and cellranger-atac tools.
+Here are the pipelines are being used for analyzing single-cell ATAC-seq samples with snaptools and cellranger-atac tools.
 
 
 #### snaptools Pipeline:
 
-Generating snap file for a data sample could be started from raw fastq files or a XXX_fragments.tsv file(which exist for some samples like 10X data) as input, which will be included here.
+snap file could be generated from both raw fastq files or an XXX_fragments.tsv file(which is a processed file including information of aligned data and exist for some samples like 10X data) as input. In this document, the pipelines for analyzing 10X data (starting from both from fastq file and fragments file) and other types of data which does not have a barcode at the beginning of their read names (like GEO data) are described. 
 
 
 ##### What is snap file:
@@ -19,16 +19,22 @@ PM session contains cell-by-peak count matrix. PM session contains cell-by-gene 
 FM session contains all usable fragments for each cell. Fragments are indexed for fast search. Detailed information about snap file can be found here.
 
 
-#### Analyzing 10X data with snaptools:
+#### Analyzing 10X data with snaptools (from fastq files):
 
 The pipline are run on https://support.10xgenomics.com/single-cell-atac/datasets/1.1.0/atac_v1_E18_brain_fresh_5k dataset from 10X as an example.
 
 ##### Step 1. Barcode demultiplexing (This step commands is for 10X Genomics data. Other datasets could use other scripts for demultiplexing)
 snaptools provide a module dex-fastq to integrate the 10X barcode into the read name (run this tool on R1 and R3 for all library files).
 
-	snaptools dex-fastq --input-fastq=atac_v1_E18_brain_cryo_5k_S1_L001_R1_001.fastq.gz --output-fastq=atac_v1_E18_brain_cryo_5k_S1_L001_R1_001.dex.fastq.gz --index-fastq-list atac_v1_E18_brain_cryo_5k_S1_L001_R2_001.fastq.gz
+	snaptools dex-fastq \
+	--input-fastq=atac_v1_E18_brain_cryo_5k_S1_L001_R1_001.fastq.gz \
+	--output-fastq=atac_v1_E18_brain_cryo_5k_S1_L001_R1_001.dex.fastq.gz \
+	--index-fastq-list atac_v1_E18_brain_cryo_5k_S1_L001_R2_001.fastq.gz
 
-	snaptools dex-fastq --input-fastq=atac_v1_E18_brain_cryo_5k_S1_L001_R3_001.fastq.gz --output-fastq=atac_v1_E18_brain_cryo_5k_S1_L001_R3_001.dex.fastq.gz --index-fastq-list atac_v1_E18_brain_cryo_5k_S1_L001_R2_001.fastq.gz
+	snaptools dex-fastq \
+	--input-fastq=atac_v1_E18_brain_cryo_5k_S1_L001_R3_001.fastq.gz \
+	--output-fastq=atac_v1_E18_brain_cryo_5k_S1_L001_R3_001.dex.fastq.gz \
+	--index-fastq-list atac_v1_E18_brain_cryo_5k_S1_L001_R2_001.fastq.gz
 
 combine these two libraries.
 
@@ -49,13 +55,41 @@ run the rest of the pipeline using atac_v1_E18_brain_cryo_5k_R1.dex.fastq.gz and
 
 
 ##### Step 3. Alignment (snaptools)
-	snaptools align-paired-end --input-reference=/home/znavidi/projects/def-wanglab/ATAC-seq-data/ref/mm10/mm10.fa --input-fastq1=atac_v1_E18_brain_cryo_5k_R1.dex.fastq.gz --input-fastq2=atac_v1_E18_brain_cryo_5k_R3.dex.fastq.gz --output-bam=atac_v1_E18_brain_cryo_5k.bam --aligner=bwa --read-fastq-command=zcat --min-cov=0 --num-threads=5 --if-sort=True --tmp-folder=./ --overwrite=TRUE
+First bwa module must be loaded.
+
+	module load bwa
+
+	snaptools align-paired-end \
+	--input-reference=/home/znavidi/projects/def-wanglab/ATAC-seq-data/ref/mm10/mm10.fa \
+	--input-fastq1=atac_v1_E18_brain_cryo_5k_R1.dex.fastq.gz \
+	--input-fastq2=atac_v1_E18_brain_cryo_5k_R3.dex.fastq.gz \
+	--output-bam=atac_v1_E18_brain_cryo_5k.bam \
+	--aligner=bwa \
+	--read-fastq-command=zcat \
+	--min-cov=0 \
+	--num-threads=5 \
+	--if-sort=True \
+	--tmp-folder=./ \
+	--overwrite=TRUE
 
 
 ##### Step 4. Pre-processing (snaptools).
 This step generates snap file from aligned bam file:
 
-	snaptools snap-pre --input-file=atac_v1_E18_brain_cryo_5k.bam --output-snap=atac_v1_E18_brain_cryo_5k.snap --genome-name=mm10 --genome-size=mm10.chrom.sizes --min-mapq=30 --min-flen=0 --max-flen=1000 --keep-chrm=TRUE --keep-single=FALSE --keep-secondary=FALSE --overwrite=True --min-cov=100 --verbose=True
+	snaptools snap-pre \
+	--input-file=atac_v1_E18_brain_cryo_5k.bam \
+	--output-snap=atac_v1_E18_brain_cryo_5k.snap \
+	--genome-name=mm10 \
+	--genome-size=mm10.chrom.sizes \
+	--min-mapq=30 \
+	--min-flen=0 \
+	--max-flen=1000 \
+	--keep-chrm=TRUE \
+	--keep-single=FALSE \
+	--keep-secondary=FALSE \
+	--overwrite=True \
+	--min-cov=100 \
+	--verbose=True
 
 Note: --keep-single argument must be TRUE if the data is single end and FALSE if the data is paired end!
 
@@ -63,7 +97,45 @@ Note: --keep-single argument must be TRUE if the data is single end and FALSE if
 ##### Step 5. Cell-by-bin matrix (snaptools)
 You can specify the bin size with which you are interested in creating cell by bin matrix.
 
-	snaptools snap-add-bmat --snap-file=atac_v1_E18_brain_cryo_5k.snap --bin-size-list 1000 2000 5000 10000 --verbose=True
+	snaptools snap-add-bmat \
+	--snap-file=atac_v1_E18_brain_cryo_5k.snap \
+	--bin-size-list 1000 2000 5000 10000 \
+	--verbose=True
+
+
+#### Analyzing 10X data with snaptools (from fastq files):
+In this case we have a XXX_fragments.tsv file which SnapATAC could create snap file from. So steps before this step are ignored.
+
+	
+##### Step 4. Pre-processing (snaptools).
+This step generates snap file from aligned bam file:
+
+	snaptools snap-pre  \
+	--input-file=atac_v1_E18_brain_cryo_5k_fragments.srt.bed.gz  \
+	--output-snap=atac_v1_E18_brain_cryo_5k.snap  \
+	--genome-name=mm10  \
+	--genome-size=mm10.chrom.sizes  \
+	--min-mapq=30  \
+	--min-flen=50  \
+	--max-flen=1000  \
+	--keep-chrm=TRUE  \
+	--keep-single=FALSE  \
+	--keep-secondary=FALSE  \
+	--overwrite=True  \
+	--max-num=20000  \
+	--min-cov=100  \
+	--verbose=True
+
+Note: --keep-single argument must be TRUE if the data is single end and FALSE if the data is paired end!
+
+
+##### Step 5. Cell-by-bin matrix (snaptools)
+You can specify the bin size with which you are interested in creating cell by bin matrix.
+
+	snaptools snap-add-bmat \
+	--snap-file=atac_v1_E18_brain_cryo_5k.snap \
+	--bin-size-list 1000 2000 5000 10000 \
+	--verbose=True
 
 
 ##### Step 6. Analyzing snap file with SnapATAC R packages:
@@ -157,14 +229,30 @@ snapATAC needs the bam file input be sorted by name.
 ##### Step 7: Pre-processing (snaptools): 
 This step generates snap file from aligned bam file:
 
-	snaptools snap-pre --input-file=atac_v1_E18_brain_cryo_5k.bam --output-snap=atac_v1_E18_brain_cryo_5k.snap --genome-name=mm10 --genome-size=mm10.chrom.sizes --min-mapq=30 --min-flen=0 --max-flen=1000 --keep-chrm=TRUE --keep-single=FALSE --keep-secondary=FALSE --overwrite=True --min-cov=100 --verbose=True
+	snaptools snap-pre \
+	--input-file=atac_v1_E18_brain_cryo_5k.bam \
+	--output-snap=atac_v1_E18_brain_cryo_5k.snap \
+	--genome-name=mm10 \
+	--genome-size=mm10.chrom.sizes \
+	--min-mapq=30 \
+	--min-flen=0 \
+	--max-flen=1000 \
+	--keep-chrm=TRUE \
+	--keep-single=FALSE \
+	--keep-secondary=FALSE \
+	--overwrite=True \
+	--min-cov=100 \
+	--verbose=True
 
 Note: --keep-single argument must be TRUE if the data is single end and FALSE if the data is paired end!
 
 ##### Step 8. Cell-by-bin matrix (snaptools)
 You can specify the bin size with which you are interested in creating cell by bin matrix.
 
-	snaptools snap-add-bmat --snap-file=atac_v1_E18_brain_cryo_5k.snap --bin-size-list 1000 2000 5000 10000 --verbose=True
+	snaptools snap-add-bmat \
+	--snap-file=atac_v1_E18_brain_cryo_5k.snap \
+	--bin-size-list 1000 2000 5000 10000 \
+	--verbose=True
 
 ## Cell Ranger:
 
