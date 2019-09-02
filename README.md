@@ -136,23 +136,35 @@ Each single cell sample is discriminated by a unique  barcode string at the begi
 
 ${barcode}:${read name}
 
-Because some of the samples, like GEO data that we have analyzed, do not have this format of barcode in their fastq files, we must add it manually. For each sample analyzed till now there is a python code in projects/def-wanglab/ATAC-seq-data/code named edit_XXX.py with XXX as id of data. This code should be written based on the cell types and id of sampples and barcodes must be added to the beginning of all reads name of each sample. 
+Because some of the samples, like GEO data that we have analyzed, do not have this format of barcode in their fastq files, we must add it manually. For each sample analyzed till now there is a python code in projects/def-wanglab/ATAC-seq-data/code named edit_XXX.py with XXX as id of data. This code should be written based on the cell types and id of sampples and barcodes must be added to the beginning of all reads name of each sample. So, for each XXX.sam we will have a new version with barcode named XXX_barcode.sam
 
 
 ##### Step 4: Convert sam files to bam files:
-
+	samtools view -S -b XXX_barcode.sam > XXX_barcode.bam
 
 ##### Step 5: Merge bam files to XXX-merged.bam
 
+in order to make snap file for all sample we need to have a bam file including all single cells (generated bam files). So we merge all bam file into one XXX-merged.bam file.
+
+	samtools merge XXX-merged.bam *.bam
+
 
 ##### Step 6: Sort merged bam file by name:
+snapATAC needs the bam file input be sorted by name.
 
+	samtools sort -n -o XXX-merged.nsorted.bam XXX-merged.bam
 
 ##### Step 7: Pre-processing (snaptools): 
+This step generates snap file from aligned bam file:
 
+	snaptools snap-pre --input-file=atac_v1_E18_brain_cryo_5k.bam --output-snap=atac_v1_E18_brain_cryo_5k.snap --genome-name=mm10 --genome-size=mm10.chrom.sizes --min-mapq=30 --min-flen=0 --max-flen=1000 --keep-chrm=TRUE --keep-single=FALSE --keep-secondary=FALSE --overwrite=True --min-cov=100 --verbose=True
+
+Note: --keep-single argument must be TRUE if the data is single end and FALSE if the data is paired end!
 
 ##### Step 8. Cell-by-bin matrix (snaptools)
+You can specify the bin size with which you are interested in creating cell by bin matrix.
 
+	snaptools snap-add-bmat --snap-file=atac_v1_E18_brain_cryo_5k.snap --bin-size-list 1000 2000 5000 10000 --verbose=True
 
 ## Cell Ranger:
 
