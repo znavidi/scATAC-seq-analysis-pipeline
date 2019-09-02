@@ -105,7 +105,7 @@ You can specify the bin size with which you are interested to create cell by bin
 	--verbose=True
 
 
-#### Analyzing 10X data with snaptools (from fastq files):
+#### Analyzing 10X data with snaptools (from fragments.tsv.gz file):
 In this case we have a XXX_fragments.tsv file which snaptools could create snap file from. Steps before this step are ignored.
 
 
