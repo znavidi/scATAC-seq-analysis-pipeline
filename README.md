@@ -49,18 +49,20 @@ run the rest of the pipeline using atac_v1_E18_brain_cryo_5k_R1.dex.fastq.gz and
 
 
 ##### Step 3. Alignment (snaptools)
-	snaptools align-paired-end --input-reference=hg38.fa --input-fastq1=atac_v1_E18_brain_cryo_5k_R1.dex.fastq.gz --input-fastq2=atac_v1_E18_brain_cryo_5k_R3.dex.fastq.gz --output-bam=atac_v1_E18_brain_cryo_5k.bam --aligner=bwa --read-fastq-command=zcat --min-cov=0 --num-threads=5 --if-sort=True --tmp-folder=./ --overwrite=TRUE
+	snaptools align-paired-end --input-reference=/home/znavidi/projects/def-wanglab/ATAC-seq-data/ref/mm10/mm10.fa --input-fastq1=atac_v1_E18_brain_cryo_5k_R1.dex.fastq.gz --input-fastq2=atac_v1_E18_brain_cryo_5k_R3.dex.fastq.gz --output-bam=atac_v1_E18_brain_cryo_5k.bam --aligner=bwa --read-fastq-command=zcat --min-cov=0 --num-threads=5 --if-sort=True --tmp-folder=./ --overwrite=TRUE
 
 
 ##### Step 4. Pre-processing (snaptools).
 This step generates snap file from aligned bam file:
 
-	snaptools snap-pre --input-file=atac_v1_E18_brain_cryo_5k.bam --output-snap=atac_v1_E18_brain_cryo_5k.snap --genome-name=hg38 --genome-size=hg38.chrom.sizes --min-mapq=30 --min-flen=0 --max-flen=1000 --keep-chrm=TRUE --keep-single=FALSE --keep-secondary=FALSE --overwrite=True --min-cov=100 --verbose=True
+	snaptools snap-pre --input-file=atac_v1_E18_brain_cryo_5k.bam --output-snap=atac_v1_E18_brain_cryo_5k.snap --genome-name=mm10 --genome-size=mm10.chrom.sizes --min-mapq=30 --min-flen=0 --max-flen=1000 --keep-chrm=TRUE --keep-single=FALSE --keep-secondary=FALSE --overwrite=True --min-cov=100 --verbose=True
 
 Note: --keep-single argument must be TRUE if the data is single end and FALSE if the data is paired end!
 
 
 ##### Step 5. Cell-by-bin matrix (snaptools)
+You can specify the bin size with which you are interested in creating cell by bin matrix.
+
 	snaptools snap-add-bmat --snap-file=atac_v1_E18_brain_cryo_5k.snap --bin-size-list 1000 2000 5000 10000 --verbose=True
 
 
@@ -104,18 +106,37 @@ GEO datasets that we have analayzed don't have cellranger canonical structured f
 ##### Step 1. Download GEO datasets:
 
 loads the sra-toolkit module
+
 	module load sra-toolkit/2.9.6
 	
 the downloaded sra files are stored in the home/${user}/ncbi/public/sra/ address by default.
 
-by having a text file of accession list of downloaded sra files in a text file, the fastq files could be downloaded with this command:
-	prefetch $(</home/${user}/ncbi/public/sra/X/sra/SRR_Acc_List.txt)
+by having a text file of accession list of downloaded sra files in a text file (each SRR id in a row), the fastq files could be downloaded with this command. The fastq files will be stored in the foder that the command is running:
+	prefetch $(</home/${user}/ncbi/public/sra/SRR_Acc_List.txt)
 
+##### Step 2. Fix fastq pairs:
+Some of the fastq paired files do not have 1/2 index in their read names which cause an error in alignment. In order to prevent this error we edit the read names of all fastq paired files with this command in bash:
+
+	sed -E "s/^((@|+)SRR[^.]+.[^.]+).(1|2)/\1/" XXX_1.fastq > XXX_1.fixed.fastq
+	sed -E "s/^((@|+)SRR[^.]+.[^.]+).(1|2)/\1/" XXX_2.fastq > XXX_2.fixed.fastq
+
+and the rest of the analysis are performed on these fixed files.
 
 ##### Step 2. Align fastq files:
 
+In this step we use BWA for alignment. 
+
+	module load bwa (loading the module in compute canada or uhn cluster)
+
+	bwa mem /home/znavidi/projects/def-wanglab/ATAC-seq-data/ref/mm10/mm10.fa XXX_1.fixed.fastq XXX_2.fixed.fastq > XXX.sam
+
 
 ##### Step 3. Generate and add unique barcodes for each single cell sample to sam files:
+Each single cell sample is discriminated by a unique  barcode string at the beginning of all of its read names. The barcode is a string from {A, T, C, G} set and must exist at the beginning of reads names for all reads from same single cell in order to be analyzed by SnapATAC. The format of read name should be like:
+
+${barcode}:${read name}
+
+Because some of the samples, like GEO data that we have analyzed, do not have this format of barcode in their fastq files, we must add it manually. For each sample analyzed till now there is a python code in projects/def-wanglab/ATAC-seq-data/code named edit_XXX.py with XXX as id of data. This code should be written based on the cell types and id of sampples and barcodes must be added to the beginning of all reads name of each sample. 
 
 
 ##### Step 4: Convert sam files to bam files:
