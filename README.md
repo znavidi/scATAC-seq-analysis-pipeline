@@ -264,3 +264,8 @@ manual: https://support.10xgenomics.com/single-cell-atac/software/pipelines/late
 --fastqs=atac_v1_E18_brain_cryo_5k_fastqs
 
 
+Note: If a dataset is generated on a chromium instrument it is possible to use cellranger-atac for analysis. Otherwise, the dependence of the pipelines on knowing the 10x barcode information would render it impossible to use with an alternate (non 10x) platform. 
+
+Some of the GEO datasets that we have analyzed have not the canonical 10X structure and could not be analyzed by cellranger-atac.
+
+
