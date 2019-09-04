@@ -238,6 +238,10 @@ You can specify the bin size with which you are interested in creating cell by b
 	--verbose=True
 	
 	
+#### Download 10X datasets:
+
+In order to download 10X data you simply need to go to its 10X website and all the available files like raw fastq, bam, peak bed file, and processed results like fragments.tsv, clustering files etc are provided there which you can download by copying their link and using wget or curl in terminal.
+
 
 ## Cell Ranger:
 
