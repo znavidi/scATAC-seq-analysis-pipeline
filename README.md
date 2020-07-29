@@ -1,4 +1,4 @@
-# ATACseq Analysis Pipeline
+# scATACseq Analysis Pipeline
 
 Here are the pipelines are being used for analyzing single-cell ATAC-seq samples with snaptools and cellranger-atac tools.
 
